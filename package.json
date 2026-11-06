@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "SHMAQ STUDIO — bilingual (EN/AR) portfolio for an independent Saudi creative studio.",
+  "homepage": "https://advmog16.github.io/shmaq-website",
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs src",
     "build": "node scripts/build.mjs",
     "preview": "node scripts/build.mjs && node scripts/serve.mjs dist"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }

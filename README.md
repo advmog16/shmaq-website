@@ -23,6 +23,7 @@ Requires Node 18+. There are **no npm dependencies** — nothing to install.
 shmaq-website/
 ├── src/                      ← the website (edit here)
 │   ├── index.html            page markup; static text uses data-i18n="key"
+│   ├── 404.html · robots.txt · sitemap.xml
 │   ├── css/
 │   │   ├── main.css          entry: @imports every partial below, in order
 │   │   ├── tokens.css        colors, fonts, easing, spacing
@@ -88,9 +89,19 @@ Everything a non-developer needs is in three files — see **[docs/CONTENT.md](d
 
 ## Deployment
 
-Pushing to `main` runs `.github/workflows/deploy.yml`, which builds `dist/` and publishes it to GitHub Pages.
-Enable it once in **Settings → Pages → Source: GitHub Actions**.
-For a custom domain, add a `CNAME` file containing the domain to `src/` (it is copied into `dist/`).
+**Live:** https://advmog16.github.io/shmaq-website/
+
+Pushing to `main` runs `.github/workflows/deploy.yml`, which builds `dist/` and publishes it to GitHub Pages
+(**Settings → Pages → Source: GitHub Actions**).
+
+The public address lives in one place: `"homepage"` in `package.json`. The build writes it into the
+canonical link, social-preview tags (`assets/brand/og.jpg`), `sitemap.xml`, `robots.txt` and `404.html`.
+
+### Moving to a custom domain
+
+1. Set `"homepage"` in `package.json` to the domain, e.g. `"https://shmaq.studio"`.
+2. Add `src/CNAME` containing just the domain, e.g. `shmaq.studio`.
+3. Point the domain's DNS at GitHub Pages and enter it in **Settings → Pages → Custom domain**.
 
 ## Credits
 

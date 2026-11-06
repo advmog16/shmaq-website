@@ -61,17 +61,34 @@ async function minifyScripts() {
   }
 }
 
+/**
+ * Absolute URLs (canonical, social previews, sitemap) need the public address.
+ * Set it once in package.json "homepage", or override with SITE_URL=https://example.com.
+ */
+async function injectSiteURL() {
+  const pkg = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
+  const site = (process.env.SITE_URL || pkg.homepage || "").replace(/\/+$/, "");
+  if (!site) throw new Error('Set "homepage" in package.json or SITE_URL for absolute URLs.');
+  for (const file of await walk(dist)) {
+    if (![".html", ".xml", ".txt"].includes(extname(file))) continue;
+    const text = await readFile(file, "utf8");
+    if (text.includes("%SITE_URL%")) await writeFile(file, text.replaceAll("%SITE_URL%", site));
+  }
+  return site;
+}
+
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
 await rm(dist, { recursive: true, force: true });
 await cp(src, dist, { recursive: true });
 await bundleCSS();
 await minifyScripts();
+const site = await injectSiteURL();
 
 const files = await walk(dist);
 const sizes = await Promise.all(files.map(async (f) => [f.slice(dist.length + 1), (await stat(f)).size]));
 const total = sizes.reduce((a, [, s]) => a + s, 0);
 const code = sizes.filter(([f]) => /\.(html|css|js)$/.test(f));
-console.log("dist/ built");
+console.log(`dist/ built for ${site}`);
 for (const [f, s] of code) console.log(`  ${f.padEnd(28)} ${kb(s)}`);
 console.log(`  code total: ${kb(code.reduce((a, [, s]) => a + s, 0))} · everything: ${kb(total)} (${files.length} files)`);
