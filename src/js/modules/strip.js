@@ -1,36 +1,58 @@
-/** Pinned 16mm film strip that travels horizontally while you scroll down. */
+/**
+ * Pinned 16mm film strip. It loops endlessly: frames that leave one side come
+ * back on the other. Scrolling drives it, and a slow drift keeps it alive at rest.
+ */
 import { STRIP } from "../data/projects.js";
 import { $, $$, clamp, pad2, imgTag, reduceMotion } from "../utils.js";
-import { onFrame } from "../scroll.js";
+
+const COPIES = 3;   // enough film to always cover the screen while looping
+const RATIO = 1.3;  // px sideways per px scrolled
+const DRIFT = 28;   // px per second when idle
 
 export function initStrip() {
   const section = $(".strip");
   const track = $(".strip-track");
   const progress = $(".strip-progress");
 
-  track.innerHTML = STRIP.map((name, i) =>
-    `<figure class="frame"><div class="frame-in">${imgTag(name, { sizes: "(max-width: 900px) 70vw, 45vw" })}</div><figcaption>KODAK ${pad2(i + 1)}A ▸ 16MM</figcaption></figure>`
-  ).join("");
+  const frame = (name, i, copy) =>
+    `<figure class="frame"${copy ? ' aria-hidden="true"' : ""}><div class="frame-in">${imgTag(name, { sizes: "(max-width: 900px) 70vw, 45vw" })}</div><figcaption>KODAK ${pad2(i + 1)}A ▸ 16MM</figcaption></figure>`;
+  track.innerHTML = Array.from({ length: COPIES }, (_, c) => STRIP.map((n, i) => frame(n, i, c > 0)).join("")).join("");
+  const frames = $$(".frame", track);
   const images = $$("img", track);
 
-  // The section is as tall as the film is long, so the strip glides with the
-  // scroll (about 1.3px sideways per 1px down) instead of racing past.
-  const RATIO = 1.3;
-  const distanceFor = (w) => Math.max(0, track.scrollWidth - w);
-  const size = () => { section.style.height = `${Math.max(innerHeight * 2.5, distanceFor(innerWidth) / RATIO)}px`; };
+  // Width of one full pass of the film.
+  let setWidth = 1;
+  const size = () => {
+    setWidth = frames[STRIP.length].offsetLeft - frames[0].offsetLeft || 1;
+    section.style.height = `${Math.max(innerHeight * 2.5, setWidth / RATIO)}px`;
+  };
   size();
   addEventListener("resize", size);
 
-  onFrame((_y, vp) => {
+  let drift = 0;
+  let prev = 0;
+  let running = false;
+
+  function loop(now) {
+    if (!running) return;
+    const dt = prev ? Math.min((now - prev) / 1000, 0.05) : 0;
+    prev = now;
+    if (!reduceMotion) drift += DRIFT * dt;
+
     const r = section.getBoundingClientRect();
-    if (r.top > vp.h || r.bottom < 0) return;
-    // Starts moving as soon as the strip enters the screen and keeps going until it leaves.
-    const p = clamp((vp.h - r.top) / r.height);
-    const distance = distanceFor(vp.w);
-    track.style.setProperty("--sx", `${(-p * distance).toFixed(1)}px`);
+    const p = clamp((innerHeight - r.top) / r.height);
+    const offset = (p * setWidth + drift) % setWidth;
+    track.style.setProperty("--sx", `${(-offset).toFixed(1)}px`);
     progress.style.setProperty("--sp", p.toFixed(4));
     if (!reduceMotion) {
       images.forEach((img, i) => img.style.setProperty("--fx", `${((p * 2 - 1) * -6 + (i % 2) * 2).toFixed(2)}%`));
     }
-  });
+    requestAnimationFrame(loop);
+  }
+
+  new IntersectionObserver(([entry]) => {
+    const was = running;
+    running = entry.isIntersecting;
+    if (running && !was) { prev = 0; requestAnimationFrame(loop); }
+  }).observe(section);
 }

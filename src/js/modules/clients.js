@@ -5,7 +5,9 @@ import { $$ } from "../utils.js";
 
 export function initClients() {
   $$(".logos").forEach((row) => {
-    const names = CLIENTS[Number(row.dataset.row)] || [];
+    // Each set repeats the logos so it is always wider than the screen: no gap before the loop restarts.
+    const base = CLIENTS[Number(row.dataset.row)] || [];
+    const names = [...base, ...base];
     const logos = (decorative) => names
       .map((n) => `<img src="${CONFIG.clientDir}${n}.png" alt="${decorative ? "" : n.replace(/-/g, " ")}"${decorative ? ' aria-hidden="true"' : ""} height="96" decoding="async" />`)
       .join("");
