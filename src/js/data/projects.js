@@ -142,7 +142,7 @@ export const HERO = [
 ];
 
 /** Frames shown in the pinned 16mm film strip. */
-export const STRIP = ["palm-alley", "roots-pool", "dolma-walk", "palm-mother", "easy-bike", "win-sax", "palm-dates", "kabab-c", "bsf-face", "palm-boy"];
+export const STRIP = ["palm-alley", "palm-pool", "palm-mother", "palm-dates", "palm-water", "palm-boy"]; // Mother of Palms only
 
 /** Client logos (assets/clients/<name>.png), one array per marquee row. */
 export const CLIENTS = [
