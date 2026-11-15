@@ -89,7 +89,7 @@ Everything a non-developer needs is in three files — see **[docs/CONTENT.md](d
 
 ## Deployment
 
-**Live:** https://advmog16.github.io/shmaq-website/
+**Live:** https://shmaqstudio.com (also https://advmog16.github.io/shmaq-website/)
 
 Pushing to `main` runs `.github/workflows/deploy.yml`, which builds `dist/` and publishes it to GitHub Pages
 (**Settings → Pages → Source: GitHub Actions**).
