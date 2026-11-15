@@ -12,3 +12,6 @@ html[dir="rtl"] .case-next { text-align: right; }
 html[dir="rtl"] .card:hover .card-arrow { transform: rotate(-135deg); }
 html[dir="rtl"] .steps li:hover h3 { transform: translateX(-18px); }
 html[dir="rtl"] .contact-btn i { transform: scaleX(-1); }
+
+/* The film strip is laid out left-to-right; anchor it to the left edge so it does not overflow off-screen. */
+[dir="rtl"] .strip-track { align-self: flex-end; }

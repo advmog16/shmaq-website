@@ -27,7 +27,18 @@ export function initStrip() {
     section.style.height = `${Math.max(innerHeight * 2.5, setWidth / RATIO)}px`;
   };
   size();
-  addEventListener("resize", size);
+  // Only re-measure when the width changes: on phones the height changes every time the
+  // browser toolbar shows/hides, and resizing the section then makes the page jump.
+  let lastW = innerWidth;
+  addEventListener("resize", () => { if (innerWidth !== lastW) { lastW = innerWidth; size(); } });
+
+  // Frames moved in with transforms are not always picked up by lazy loading (Safari),
+  // so load the whole film as soon as the section gets close.
+  new IntersectionObserver(([entry], io) => {
+    if (!entry.isIntersecting) return;
+    images.forEach((img) => (img.loading = "eager"));
+    io.disconnect();
+  }, { rootMargin: "100% 0px" }).observe(section);
 
   let drift = 0;
   let prev = 0;
