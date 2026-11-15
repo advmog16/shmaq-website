@@ -146,6 +146,6 @@ export const STRIP = ["palm-alley", "roots-pool", "dolma-walk", "palm-mother", "
 
 /** Client logos (assets/clients/<name>.png), one array per marquee row. */
 export const CLIENTS = [
-  ["bsf", "marble", "dolmat-ommy", "ithraa", "easy-bakery", "kabab-zahr"],
-  ["alrajhi", "riyad-bank", "moh", "uae-culture", "sayyar", "gazelle"]
+  ["alrajhi", "riyad-bank", "moh", "uae-culture", "sayyar", "gazelle"],
+  ["bsf", "marble", "dolmat-ommy", "ithraa", "easy-bakery", "kabab-zahr"]
 ];

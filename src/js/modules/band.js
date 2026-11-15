@@ -15,28 +15,33 @@ function render() {
 
 export function initBand() {
   onLangChange(render);
-  if (reduceMotion) return;
 
+  // Runs continuously (also with reduced motion, minus the scroll skew/boost).
+  const SPEED = 1.21; // px per 60fps frame (+10%)
   let x = 0;
+  let prev = 0;
   let velocity = 0;
   let last = scrollY;
   let running = false;
 
-  function loop() {
+  function loop(now) {
     if (!running) return;
+    const dt = prev ? Math.min((now - prev) / (1000 / 60), 3) : 1;
+    prev = now;
     const y = scrollY;
-    velocity = lerp(velocity, (y - last) * 0.6, 0.12);
+    if (!reduceMotion) velocity = lerp(velocity, (y - last) * 0.6, 0.12);
     last = y;
     const rowWidth = track.firstElementChild?.offsetWidth || 1;
-    x -= 1.1 + Math.abs(velocity);
-    if (x <= -rowWidth) x += rowWidth;
-    track.style.transform = `translate3d(${x}px,0,0) skewX(${clamp(-velocity * 0.4, -10, 10).toFixed(2)}deg)`;
+    x -= (SPEED + Math.abs(velocity)) * dt;
+    while (x <= -rowWidth) x += rowWidth;
+    track.style.transform = `translate3d(${x.toFixed(2)}px,0,0) skewX(${clamp(-velocity * 0.4, -10, 10).toFixed(2)}deg)`;
     requestAnimationFrame(loop);
   }
 
   // Only animate while on screen.
   new IntersectionObserver(([entry]) => {
+    const was = running;
     running = entry.isIntersecting;
-    if (running) { last = scrollY; requestAnimationFrame(loop); }
+    if (running && !was) { last = scrollY; prev = 0; requestAnimationFrame(loop); }
   }).observe(band);
 }

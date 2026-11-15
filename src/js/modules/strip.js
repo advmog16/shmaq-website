@@ -13,11 +13,20 @@ export function initStrip() {
   ).join("");
   const images = $$("img", track);
 
+  // The section is as tall as the film is long, so the strip glides with the
+  // scroll (about 1.3px sideways per 1px down) instead of racing past.
+  const RATIO = 1.3;
+  const distanceFor = (w) => Math.max(0, track.scrollWidth - w);
+  const size = () => { section.style.height = `${Math.max(innerHeight * 2.5, distanceFor(innerWidth) / RATIO)}px`; };
+  size();
+  addEventListener("resize", size);
+
   onFrame((_y, vp) => {
     const r = section.getBoundingClientRect();
     if (r.top > vp.h || r.bottom < 0) return;
-    const p = clamp(-r.top / (r.height - vp.h));
-    const distance = Math.max(0, track.scrollWidth - vp.w);
+    // Starts moving as soon as the strip enters the screen and keeps going until it leaves.
+    const p = clamp((vp.h - r.top) / r.height);
+    const distance = distanceFor(vp.w);
     track.style.setProperty("--sx", `${(-p * distance).toFixed(1)}px`);
     progress.style.setProperty("--sp", p.toFixed(4));
     if (!reduceMotion) {

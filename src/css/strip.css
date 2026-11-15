@@ -4,7 +4,6 @@
 .strip-head { padding: 0 var(--pad); display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 18px 40px; }
 .strip-head .section-head { grid-column: 1 / -1; color: rgba(236, 234, 227, .55); }
 .strip-head .section-no { color: var(--paper); }
-.strip-sub { max-width: 34ch; color: rgba(236, 234, 227, .65); font-size: 15px; }
 .strip-track { display: flex; gap: 0; width: max-content; padding: 0 var(--pad); direction: ltr; will-change: transform; transform: translate3d(var(--sx, 0), 0, 0); }
 .frame {
   position: relative; flex-shrink: 0;
