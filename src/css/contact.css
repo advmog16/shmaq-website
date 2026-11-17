@@ -25,3 +25,19 @@
 .footer > p { margin-top: 26px; color: rgba(236, 234, 227, .6); max-width: 30ch; }
 .footer-row { margin-top: clamp(50px, 7vw, 90px); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 30px; font-size: 13px; color: rgba(236, 234, 227, .6); border-top: 1px solid rgba(236, 234, 227, .14); padding-top: 22px; }
 .footer-row a:hover { color: var(--paper); }
+
+/* Social links */
+.social { list-style: none; margin: clamp(30px, 4vw, 46px) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+.social a {
+  display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px 0 6px;
+  border: 1px solid rgba(236, 234, 227, .22); border-radius: 999px; color: var(--paper); font-size: 14px;
+  transition: background .4s var(--ease), border-color .4s var(--ease), color .4s var(--ease);
+}
+.social svg {
+  width: 36px; height: 36px; padding: 8px; border-radius: 50%; background: rgba(236, 234, 227, .08);
+  fill: none; stroke: currentColor; stroke-width: 1.6; transition: transform .6s var(--ease), background .4s;
+}
+.social svg .fill { fill: currentColor; stroke: none; }
+.social a:hover, .social a:focus-visible { background: var(--red); border-color: var(--red); color: var(--white); }
+.social a:hover svg { background: rgba(0, 0, 0, .14); transform: rotate(-12deg) scale(1.06); }
+html[lang="ar"] .social a { padding: 0 6px 0 20px; }
